@@ -41,3 +41,37 @@ function getHighCities3(query:string):Promise<City[]>{
     });
 }
 //-----------------------------------------------------------------------------------------------------------------
+abstract class FastVector {
+    constructor() {}
+    rootSum(a: number[]): number[] { /* Some implementation */ }
+    pairSum(a: number[], b: number[]): number[] { /* Some implementation */ }
+    pairProduct(a: number[], b: number[]): number[] { /* Some implementation */ }
+}
+
+class SafeVector extends FastVector{
+    constructor(){
+        super();
+    }
+    private arrLenChecker(a:number[]){
+        if(a.length <= 0){
+            throw new Error("input should greater than 0");
+        }
+    }
+    safeRootSum(a:number[]):number[]{
+        this.arrLenChecker(a);
+        if(a.reduce((acc,i)=>acc+i,0)< 0){
+            throw new Error("sum of input arr must be non-negative");
+        }
+        return super.rootSum(a);
+    }
+    safePairSum(a:number[],b:number[]):number[]{
+        this.arrLenChecker(a);
+        this.arrLenChecker(b);
+        return super.pairSum(a,b);
+    }
+    safePairProduct(a:number[],b:number[]):number[]{
+        this.arrLenChecker(a);
+        this.arrLenChecker(b);
+        return super.pairProduct(a,b);
+    }
+}
