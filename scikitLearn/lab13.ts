@@ -9,9 +9,9 @@ function getCityElevation(cityName: string): Promise<number>{return Promise.reso
 type City = {name:string,elevation:number};
 
 
-async function getHighCities(query:string):Promise<City[]>{
+function getHighCities(query:string):Promise<City[]>{
     const arr:City[] = [];
-    return searchCities(query).then(async cities => {
+    return searchCities(query).then(cities => {
         const promises = cities.map(getCityElevation);
         return Promise.all(promises).then(elevations => {
             elevations.forEach((e,i) => {
@@ -32,3 +32,12 @@ async function getHighCities2(query:string):Promise<City[]>{
         return {name:e,elevation:elevations[i]}
     }).filter(e => e.elevation > 5000);
 }
+function getHighCities3(query:string):Promise<City[]>{
+    return searchCities(query).then(cities => {
+        const promises = cities.map(getCityElevation);
+        return Promise.all(promises).then(elevations => {
+            return elevations.map((e,i) => ({name:cities[i],elevation:e})).filter(e => e.elevation>5000);
+        });
+    });
+}
+//-----------------------------------------------------------------------------------------------------------------
