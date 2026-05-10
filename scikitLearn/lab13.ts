@@ -145,3 +145,30 @@ function treeCalls<T>(tree:Tree<T>):() => T|undefined {
         return arr[index++];
     };
 }
+//---------------------------------------------------------------------------------------
+
+function p<T>(a:T[],f:(a:T)=>Promise<boolean>){
+    return new Promise((res,rej) => {
+        let [countT,countF] = [0,0];
+        const full = Math.floor(a.length/2)+1;
+        a.forEach(e => {
+            f(e).then(b => {
+                if(b){
+                    countT++;
+                    if(countT >= full){
+                        res(true);
+                    }
+                }else{
+                    countF++;
+                    if(countF >= full){
+                        res(false);
+                    }
+                }
+                if(countT+countF === a.length){
+                    rej("rejected");
+                }
+            })
+        });
+    })
+}
+//--------------------------------------------------------------------------------------------------------------------
