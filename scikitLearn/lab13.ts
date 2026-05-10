@@ -105,3 +105,43 @@ function countSwaps(e: Expression): number {
     }
     return count;
 }
+//-----------------------------------------------------------------------------------------------
+//type c<T> = () => T | undefined;
+function sequenceClosures<T>(c1:() => T | undefined,c2:() => T | undefined):() => T | undefined{
+    let func = c1;
+    return () => {
+        let toReturn = func();
+        if(toReturn === undefined && func === c1){
+            func = c2;
+            toReturn = func();
+        }
+        return toReturn;
+    };
+    
+}
+type Tree<T> = { val: T, left?: Tree<T>, right?: Tree<T> };
+function treeCalls<T>(tree:Tree<T>):() => T|undefined {
+    if(tree === undefined || tree.val === undefined){
+        return () => undefined;
+    }
+    function treeCallsHelper<T>(tree:Tree<T>,arr:T[]){
+        if(tree.val !== undefined){
+            arr.push(tree.val);
+        }
+        if(tree.left){
+            treeCallsHelper(tree.left,arr);
+        }
+        if(tree.right){
+            treeCallsHelper(tree.right,arr);
+        }
+    }
+    const arr:T[] = [];
+    treeCallsHelper(tree,arr);
+    let index = 0;
+    return () => {
+        if(index >= arr.length){
+            return undefined
+        }
+        return arr[index++];
+    };
+}
