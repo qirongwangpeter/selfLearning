@@ -75,3 +75,33 @@ class SafeVector extends FastVector{
         return super.pairProduct(a,b);
     }
 }
+//------------------------------------------------------------------------------------------------
+type Expression = { kind: "number", value: number }
+| { kind: "operator", operator: "+" | "-", left: Expression, right: Expression }
+function countSwaps(e: Expression): number {
+    let count = 0;
+    function v(e:Expression):number{
+        if(e.kind === "number"){
+            return e.value;
+        }else{
+            if(e.operator === "+"){
+                return v(e.left)+v(e.right);
+            }else{
+                return v(e.left)-v(e.right);
+            }
+        }
+    }
+    if(e.kind === "operator"){
+        switch(e.operator){
+            case "+":
+                count = 1 + countSwaps(e.left)+countSwaps(e.right);break;
+            case "-":
+                if(v(e.left) === v(e.right)){
+                    count = 1 + countSwaps(e.left)+countSwaps(e.right);break;
+                }else{
+                    count = countSwaps(e.left)+countSwaps(e.right);break;
+                }
+        }
+    }
+    return count;
+}
