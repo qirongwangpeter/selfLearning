@@ -172,3 +172,62 @@ function p<T>(a:T[],f:(a:T)=>Promise<boolean>){
     })
 }
 //--------------------------------------------------------------------------------------------------------------------
+interface MyIter<T> { hasNext: () => boolean; next: () => T }
+class Iterable<T>{
+    constructor(private arr:T[]){
+    }
+    makeIter():MyIter<T>{
+        let index = 0;
+        return {
+            hasNext:() => {
+                return index < this.arr.length;
+            },
+            next:() => {
+                return this.arr[index++];
+            }
+        };
+    }
+}
+
+type Point = { x: number, y: number };
+function drawEll(ctr: Point, a: number, b: number){};
+interface Shape { draw(): void };
+class Ellipse implements Shape{
+    constructor(protected center:Point,protected a:number,protected b:number){
+    };
+    draw(){
+        drawEll(this.center,this.a,this.b);
+    }
+}
+class Circle extends Ellipse{
+    constructor(center:Point,radius:number){
+        super(center,radius,radius);
+    }
+}
+class CompoundShape extends Iterable<Shape> implements Shape{
+    draw(){
+        const it = this.makeIter();
+        while(it.hasNext()){
+            it.next().draw();
+        }
+    }
+}
+interface ScaleShape extends Shape {
+    scaleX: (xf: number) => ScaleShape 
+}
+class ScaleEllipse extends Ellipse implements ScaleShape{
+    scaleX(xf:number):ScaleEllipse{
+        return new ScaleEllipse(this.center,this.a*xf,this.b);
+    }
+}
+class ScaleCircle extends ScaleEllipse{
+    scaleX(xf: number): ScaleEllipse {
+        return new ScaleCircle(this.center,this.a*xf,this.b);
+    }
+}
+class ScaleCompound implements ScaleShape{
+    constructor(protected a:ScaleShape[]){}
+    scaleX(xf: number):ScaleCo{
+
+    }
+}
