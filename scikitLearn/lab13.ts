@@ -225,9 +225,13 @@ class ScaleCircle extends ScaleEllipse{
         return new ScaleCircle(this.center,this.a*xf,this.b);
     }
 }
-class ScaleCompound implements ScaleShape{
-    constructor(protected a:ScaleShape[]){}
-    scaleX(xf: number):ScaleCo{
-
+class ScaleCompound extends CompoundShape implements ScaleShape{
+    scaleX(xf: number){
+        const arr:ScaleShape[] = [];
+        const it = this.makeIter();
+        while(it.hasNext()){
+            arr.push((it.next() as ScaleShape).scaleX(xf));
+        }
+        return new ScaleCompound(arr);
     }
 }
